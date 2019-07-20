@@ -20,15 +20,6 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Welcome!")
 }
 
-func TodoIndex(w http.ResponseWriter, r *http.Request) {
-	todos := []Todo{
-		Todo{Name: "Write presentation"},
-		Todo{Name: "Host meetup"},
-	}
-
-	Json(w, r, todos)
-}
-
 func TodoShow(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	todoId := vars["todoId"]
@@ -36,10 +27,7 @@ func TodoShow(w http.ResponseWriter, r *http.Request) {
 }
 
 func RowList(w http.ResponseWriter, r *http.Request) {
-
 	testConnection()
-
-	//members := getAll()
 
 	members := getAllRows()
 

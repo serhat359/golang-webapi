@@ -15,16 +15,13 @@ type Route struct {
 
 func NewRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
-	routes := GetRoutes()
-	for _, route := range routes {
-
-		handler := Logger(route.HandlerFunc, route.Name)
-
+	allRoutes := GetRoutes()
+	for _, route := range allRoutes {
 		router.
 			Methods(route.Method).
 			Path(route.Pattern).
 			Name(route.Name).
-			Handler(handler)
+			Handler(route.HandlerFunc)
 	}
 
 	return router
@@ -37,12 +34,6 @@ func GetRoutes() []Route {
 			"GET",
 			"/",
 			Index,
-		},
-		Route{
-			"TodoIndex",
-			"GET",
-			"/todos",
-			TodoIndex,
 		},
 		Route{
 			"TodoShow",
