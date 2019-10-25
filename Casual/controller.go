@@ -8,6 +8,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
+func enableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+}
+
 func Json(w http.ResponseWriter, o interface{}) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -36,6 +40,8 @@ func RowList(w http.ResponseWriter, r *http.Request) {
 }
 
 func LhInfo(w http.ResponseWriter, r *http.Request){
+	enableCors(&w)
+
 	testConnection()
 
 	vars := mux.Vars(r)

@@ -14,8 +14,7 @@ type A struct {
 
 func main() {
 	router := NewRouter()
-
-	server := http.ListenAndServe(":24672", router) // 24672 for development port
+	server := http.ListenAndServeTLS(":24672", "server.crt", "server.key", router) // 24672 for development port
 	log.Fatal(server)
 }
 

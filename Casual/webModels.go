@@ -1,6 +1,6 @@
 package main
 
 type LhInfoData struct{
-	Score *LhScore
-	ReadChapters []LhReadChapter
+	Score int
+	ReadChapters []string
 }
