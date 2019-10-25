@@ -8,10 +8,11 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func Json(w http.ResponseWriter, r *http.Request, o interface{}) {
+func Json(w http.ResponseWriter, o interface{}) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(o); err != nil {
+	err := json.NewEncoder(w).Encode(o)
+	if err != nil {
 		panic(err)
 	}
 }
@@ -29,7 +30,7 @@ func TodoShow(w http.ResponseWriter, r *http.Request) {
 func RowList(w http.ResponseWriter, r *http.Request) {
 	testConnection()
 
-	members := getAllRows()
+	members := getNewMembers()
 
-	Json(w, r, members)
+	Json(w, members)
 }

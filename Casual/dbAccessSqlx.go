@@ -5,14 +5,14 @@ import (
     "github.com/jmoiron/sqlx"
 )
 
-func getAllRows() []NewMember {
+func getNewMembers() []NewMember {
 	db, err := sqlx.Connect("postgres", getConnectionString())
     if err != nil {
         panic(err)
 	}
 	
 	members := []NewMember{}
-	db.Select(&members, "SELECT * FROM newmembers")
+	db.Select(&members, "SELECT * FROM member")
 	
 	return members
 }
