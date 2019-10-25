@@ -47,5 +47,11 @@ func GetRoutes() []Route {
 			"/list",
 			RowList,
 		},
+		Route{
+			"LhInfo",
+			"GET",
+			"/LhInfo/{mangaName}",
+			LhInfo,
+		},
 	}
 }

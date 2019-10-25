@@ -34,3 +34,14 @@ func RowList(w http.ResponseWriter, r *http.Request) {
 
 	Json(w, members)
 }
+
+func LhInfo(w http.ResponseWriter, r *http.Request){
+	testConnection()
+
+	vars := mux.Vars(r)
+	mangaName := vars["mangaName"]
+
+	lhInfo := getLhInfo(mangaName)
+
+	Json(w, lhInfo)
+}
