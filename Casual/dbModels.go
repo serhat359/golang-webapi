@@ -17,3 +17,7 @@ type LhReadChapter struct{
 	MangaName string	`db:"manga_name"`
 	MangaChapter string	`db:"manga_chapter"`
 }
+
+func (LhReadChapter) TableName() string {
+	return "lh_read_chapter"
+}

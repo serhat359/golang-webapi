@@ -51,3 +51,18 @@ func LhInfo(w http.ResponseWriter, r *http.Request){
 
 	Json(w, lhInfo)
 }
+
+func LhInfoAddChapter(w http.ResponseWriter, r *http.Request){
+	enableCors(&w)
+
+	testConnection()
+
+	decoder := json.NewDecoder(r.Body)
+
+	chapter := LhReadChapter{}
+	decoder.Decode(&chapter)
+
+	SaveChapter(&chapter)
+
+	Json(w, "")
+}

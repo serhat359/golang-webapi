@@ -53,5 +53,11 @@ func GetRoutes() []Route {
 			"/LhInfo/{mangaName}",
 			LhInfo,
 		},
+		Route{
+			"LhInfoAddChapter",
+			"POST",
+			"/LhInfoAddChapter",
+			LhInfoAddChapter,
+		},
 	}
 }
