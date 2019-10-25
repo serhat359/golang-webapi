@@ -66,3 +66,17 @@ func LhInfoAddChapter(w http.ResponseWriter, r *http.Request){
 
 	Json(w, "")
 }
+
+func LhInfoSetScore(w http.ResponseWriter, r *http.Request){
+	enableCors(&w)
+
+	testConnection()
+
+	decoder := json.NewDecoder(r.Body)
+	score := LhScore{}
+	decoder.Decode(&score)
+
+	SaveScore(&score)
+
+	Json(w, "")
+}

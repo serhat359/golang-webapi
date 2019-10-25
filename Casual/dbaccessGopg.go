@@ -5,15 +5,30 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-func SaveChapter(chapter *LhReadChapter) {
+func getGormDB() *gorm.DB {
 	var connectionString = getConnectionString()
 	db, err := gorm.Open("postgres", connectionString)
 	if err != nil {
 		panic(err)
 	}
+	return db
+}
+
+func SaveChapter(chapter *LhReadChapter) {
+	db := getGormDB()
 
 	db = db.Create(chapter)
-	
+	if db.Error != nil{
+		panic(db.Error)
+	}
+
+	db.Close();
+}
+
+func SaveScore(score *LhScore){
+	db := getGormDB()
+
+	db = db.Create(score)
 	if db.Error != nil{
 		panic(db.Error)
 	}

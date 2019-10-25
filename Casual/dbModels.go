@@ -12,6 +12,10 @@ type LhScore struct{
 	MangaName string	`db:"manga_name"`
 }
 
+func (LhScore) TableName() string {
+	return "lh_score"
+}
+
 type LhReadChapter struct{
 	Id int64			`db:"id"`
 	MangaName string	`db:"manga_name"`

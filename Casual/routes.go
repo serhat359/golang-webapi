@@ -59,5 +59,11 @@ func GetRoutes() []Route {
 			"/LhInfoAddChapter",
 			LhInfoAddChapter,
 		},
+		Route{
+			"LhInfoSetScore",
+			"POST",
+			"/LhInfoSetScore",
+			LhInfoSetScore,
+		},
 	}
 }
