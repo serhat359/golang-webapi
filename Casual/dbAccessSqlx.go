@@ -26,7 +26,12 @@ func getLhInfo(mangaName string) LhInfoData {
 	score := getLhScore(db, mangaName)
 	chapters := selectChapters(getLhReadChapters(db, mangaName))
 
-	return LhInfoData{ Score: score.Score, ReadChapters: chapters }
+	scorePoint := 0
+	if score != nil {
+		scorePoint = score.Score
+	}
+
+	return LhInfoData{ Score: scorePoint, ReadChapters: chapters }
 }
 
 func getLhScore(db *sqlx.DB, mangaName string) *LhScore {
