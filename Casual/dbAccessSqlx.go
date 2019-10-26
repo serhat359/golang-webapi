@@ -110,3 +110,50 @@ func GetScores(mangaNames []string) map[string]int {
 
 	return dic
 }
+
+func GetChapterStatus(chapters []string) map[string]bool {
+	db := getDB()
+
+	lhChapters := []string{}
+	arg := map[string]interface{}{
+		"chapters": chapters,
+	}
+	query, args, err := sqlx.Named("SELECT manga_chapter FROM lh_read_chapter WHERE manga_chapter IN (:chapters)", arg)
+	if err != nil {
+        panic(err)
+	}
+	query, args, err = sqlx.In(query, args...)
+	if err != nil {
+        panic(err)
+	}
+	query = db.Rebind(query)
+	rows,err := db.Query(query, args...)
+	if err != nil {
+        panic(err)
+	}
+
+	singleChapter := ""
+	for rows.Next() {
+		err = rows.Scan(&singleChapter)
+		if err != nil {
+			panic(err)
+		}
+		lhChapters = append(lhChapters, singleChapter)
+	}
+
+	dic := make(map[string]bool, len(chapters))
+
+	for _, chapter := range chapters {
+		score := false
+		for _, row := range lhChapters{
+			if row == chapter{
+				score = true
+				break
+			}
+		}
+
+		dic[chapter] = score
+	}
+
+	return dic
+}

@@ -87,10 +87,19 @@ func LhGetScoreBatch(w http.ResponseWriter, r *http.Request){
 	testConnection()
 
 	decoder := json.NewDecoder(r.Body)
-	mangaNames := []string{}
-	decoder.Decode(&mangaNames)
+	mangas := []LhMangaChapterData{}
+	decoder.Decode(&mangas)
 
+	mangaNames := selectMangaNames(mangas)
 	scores := GetScores(mangaNames)
 
-	Json(w, scores)
+	chapters := selectMangaChapters(mangas)
+	chapterStatus := GetChapterStatus(chapters)
+
+	type ResultStruct struct {
+		Scores map[string]int
+		ChapterStatus map[string]bool
+	}
+
+	Json(w, ResultStruct{ Scores: scores, ChapterStatus: chapterStatus })
 }
