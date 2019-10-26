@@ -80,3 +80,17 @@ func LhInfoSetScore(w http.ResponseWriter, r *http.Request){
 
 	Json(w, "")
 }
+
+func LhGetScoreBatch(w http.ResponseWriter, r *http.Request){
+	enableCors(&w)
+
+	testConnection()
+
+	decoder := json.NewDecoder(r.Body)
+	mangaNames := []string{}
+	decoder.Decode(&mangaNames)
+
+	scores := GetScores(mangaNames)
+
+	Json(w, scores)
+}

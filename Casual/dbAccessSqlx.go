@@ -6,10 +6,7 @@ import (
 )
 
 func getNewMembers() []NewMember {
-	db, err := sqlx.Connect("postgres", getConnectionString())
-    if err != nil {
-        panic(err)
-	}
+	db := getDB()
 	
 	members := []NewMember{}
 	db.Select(&members, "SELECT * FROM member")
@@ -17,11 +14,17 @@ func getNewMembers() []NewMember {
 	return members
 }
 
-func getLhInfo(mangaName string) LhInfoData {
+func getDB() *sqlx.DB {
 	db, err := sqlx.Connect("postgres", getConnectionString())
     if err != nil {
         panic(err)
 	}
+
+	return db
+}
+
+func getLhInfo(mangaName string) LhInfoData {
+	db := getDB()
 
 	score := getLhScore(db, mangaName)
 	chapters := selectChapters(getLhReadChapters(db, mangaName))
@@ -59,4 +62,51 @@ func getLhReadChapters(db *sqlx.DB, mangaName string) []LhReadChapter {
 	}
 
 	return readChapters
+}
+
+func GetScores(mangaNames []string) map[string]int {
+	db := getDB()
+	
+	lhScores := []LhScore{}
+	arg := map[string]interface{}{
+		"mangas": mangaNames,
+	}
+	query, args, err := sqlx.Named("SELECT id, score, manga_name FROM lh_score WHERE manga_name IN (:mangas)", arg)
+	if err != nil {
+        panic(err)
+	}
+	query, args, err = sqlx.In(query, args...)
+	if err != nil {
+        panic(err)
+	}
+	query = db.Rebind(query)
+	rows,err := db.Query(query, args...)
+	if err != nil {
+        panic(err)
+	}
+	
+	singleScore := LhScore{}
+	for rows.Next() {
+		err = rows.Scan(&singleScore.Id, &singleScore.Score, &singleScore.MangaName)
+		if err != nil {
+			panic(err)
+		}
+		lhScores = append(lhScores, singleScore)
+	}
+
+	dic := make(map[string]int, len(mangaNames))
+
+	for _, mangaName := range mangaNames {
+		score := 0
+		for _, row := range lhScores{
+			if row.MangaName == mangaName{
+				score = row.Score
+				break
+			}
+		}
+
+		dic[mangaName] = score
+	}
+
+	return dic
 }

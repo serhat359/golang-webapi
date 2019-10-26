@@ -65,5 +65,11 @@ func GetRoutes() []Route {
 			"/LhInfoSetScore",
 			LhInfoSetScore,
 		},
+		Route{
+			"LhGetScoreBatch",
+			"POST",
+			"/LhGetScoreBatch",
+			LhGetScoreBatch,
+		},
 	}
 }
