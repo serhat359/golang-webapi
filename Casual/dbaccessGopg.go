@@ -16,22 +16,20 @@ func getGormDB() *gorm.DB {
 
 func SaveChapter(chapter *LhReadChapter) {
 	db := getGormDB()
+	defer db.Close()
 
 	db = db.Create(chapter)
 	if db.Error != nil{
 		panic(db.Error)
 	}
-
-	db.Close();
 }
 
 func SaveScore(score *LhScore){
 	db := getGormDB()
+	defer db.Close()
 
 	db = db.Create(score)
 	if db.Error != nil{
 		panic(db.Error)
 	}
-
-	db.Close();
 }

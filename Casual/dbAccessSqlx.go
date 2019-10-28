@@ -25,6 +25,7 @@ func getDB() *sqlx.DB {
 
 func getLhInfo(mangaName string) LhInfoData {
 	db := getDB()
+	defer db.Close()
 
 	score := getLhScore(db, mangaName)
 	chapters := selectChapters(getLhReadChapters(db, mangaName))
@@ -66,6 +67,7 @@ func getLhReadChapters(db *sqlx.DB, mangaName string) []LhReadChapter {
 
 func GetScores(mangaNames []string) map[string]int {
 	db := getDB()
+	defer db.Close()
 	
 	lhScores := []LhScore{}
 	arg := map[string]interface{}{
@@ -113,6 +115,7 @@ func GetScores(mangaNames []string) map[string]int {
 
 func GetChapterStatus(chapters []string) map[string]bool {
 	db := getDB()
+	defer db.Close()
 
 	lhChapters := []string{}
 	arg := map[string]interface{}{
