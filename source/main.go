@@ -10,11 +10,6 @@ import (
 	"strconv"
 )
 
-type A struct {
-	Foo string
-	Foo2 int
-}
-
 type Configuration struct {
     Port int `json:"port"`
 }
@@ -43,6 +38,11 @@ func getPort() string {
 	return ":" + strconv.Itoa(configuration.Port)
 }
 
+type A struct {
+	Foo string
+	Foo2 int
+}
+
 func testReflection(){
 	fmt.Println("Exiting the program");
 
@@ -59,4 +59,20 @@ func testReflection(){
 		fmt.Printf(", (%s)", objType.Field(i).Type)
 		fmt.Println()
 	}
+}
+
+func reverseString(s string) string {
+	runeArr := []rune(s)
+
+	length := len(runeArr)
+	for index := 0; index < length/2; index++ {
+
+		reverseIndex := length - 1 - index
+		reverseElem := runeArr[reverseIndex]
+
+		runeArr[reverseIndex] = runeArr[index]
+		runeArr[index] = reverseElem
+	}
+
+	return string(runeArr)
 }
