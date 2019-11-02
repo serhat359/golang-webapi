@@ -1,23 +1,24 @@
 package main
 
 import (
-    _ "github.com/lib/pq"
+	_ "github.com/lib/pq"
     "github.com/jmoiron/sqlx"
 )
 
 func getNewMembers() []NewMember {
 	db := getDB()
-	
+	defer db.Close()
+
 	members := []NewMember{}
 	db.Select(&members, "SELECT * FROM member")
-	
+
 	return members
 }
 
 func getDB() *sqlx.DB {
 	db, err := sqlx.Connect("postgres", getConnectionString())
-    if err != nil {
-        panic(err)
+	if err != nil {
+		panic(err)
 	}
 
 	return db
@@ -35,19 +36,19 @@ func getLhInfo(mangaName string) LhInfoData {
 		scorePoint = score.Score
 	}
 
-	return LhInfoData{ Score: scorePoint, ReadChapters: chapters }
+	return LhInfoData{Score: scorePoint, ReadChapters: chapters}
 }
 
 func getLhScore(db *sqlx.DB, mangaName string) *LhScore {
 	lhScores := []LhScore{}
 	err := db.Select(&lhScores, "SELECT * FROM lh_score WHERE manga_name = $1", mangaName)
 	if err != nil {
-        panic(err)
+		panic(err)
 	}
 
 	var returnVal *LhScore = nil
 
-	if len(lhScores) > 0{
+	if len(lhScores) > 0 {
 		returnVal = &lhScores[0]
 	}
 
@@ -59,7 +60,7 @@ func getLhReadChapters(db *sqlx.DB, mangaName string) []LhReadChapter {
 
 	err := db.Select(&readChapters, "SELECT * FROM lh_read_chapter WHERE manga_name = $1", mangaName)
 	if err != nil {
-        panic(err)
+		panic(err)
 	}
 
 	return readChapters
@@ -68,25 +69,25 @@ func getLhReadChapters(db *sqlx.DB, mangaName string) []LhReadChapter {
 func GetScores(mangaNames []string) map[string]int {
 	db := getDB()
 	defer db.Close()
-	
+
 	lhScores := []LhScore{}
 	arg := map[string]interface{}{
 		"mangas": mangaNames,
 	}
 	query, args, err := sqlx.Named("SELECT id, score, manga_name FROM lh_score WHERE manga_name IN (:mangas)", arg)
 	if err != nil {
-        panic(err)
+		panic(err)
 	}
 	query, args, err = sqlx.In(query, args...)
 	if err != nil {
-        panic(err)
+		panic(err)
 	}
 	query = db.Rebind(query)
-	rows,err := db.Query(query, args...)
+	rows, err := db.Query(query, args...)
 	if err != nil {
-        panic(err)
+		panic(err)
 	}
-	
+
 	singleScore := LhScore{}
 	for rows.Next() {
 		err = rows.Scan(&singleScore.Id, &singleScore.Score, &singleScore.MangaName)
@@ -100,8 +101,8 @@ func GetScores(mangaNames []string) map[string]int {
 
 	for _, mangaName := range mangaNames {
 		score := 0
-		for _, row := range lhScores{
-			if row.MangaName == mangaName{
+		for _, row := range lhScores {
+			if row.MangaName == mangaName {
 				score = row.Score
 				break
 			}
@@ -123,16 +124,16 @@ func GetChapterStatus(chapters []string) map[string]bool {
 	}
 	query, args, err := sqlx.Named("SELECT manga_chapter FROM lh_read_chapter WHERE manga_chapter IN (:chapters)", arg)
 	if err != nil {
-        panic(err)
+		panic(err)
 	}
 	query, args, err = sqlx.In(query, args...)
 	if err != nil {
-        panic(err)
+		panic(err)
 	}
 	query = db.Rebind(query)
-	rows,err := db.Query(query, args...)
+	rows, err := db.Query(query, args...)
 	if err != nil {
-        panic(err)
+		panic(err)
 	}
 
 	singleChapter := ""
@@ -148,8 +149,8 @@ func GetChapterStatus(chapters []string) map[string]bool {
 
 	for _, chapter := range chapters {
 		score := false
-		for _, row := range lhChapters{
-			if row == chapter{
+		for _, row := range lhChapters {
+			if row == chapter {
 				score = true
 				break
 			}
