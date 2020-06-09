@@ -70,7 +70,6 @@ func GetScores(mangaNames []string) map[string]int {
 	db := getDB()
 	defer db.Close()
 
-	lhScores := []LhScore{}
 	arg := map[string]interface{}{
 		"mangas": mangaNames,
 	}
@@ -88,24 +87,23 @@ func GetScores(mangaNames []string) map[string]int {
 		panic(err)
 	}
 
-	singleScore := LhScore{}
+	lhScores := make(map[string]LhScore)
 	for rows.Next() {
+		singleScore := LhScore{}
 		err = rows.Scan(&singleScore.Id, &singleScore.Score, &singleScore.MangaName)
 		if err != nil {
 			panic(err)
 		}
-		lhScores = append(lhScores, singleScore)
+		lhScores[singleScore.MangaName] = singleScore
 	}
 
-	dic := make(map[string]int, len(mangaNames))
+	dic := make(map[string]int)
 
 	for _, mangaName := range mangaNames {
 		score := 0
-		for _, row := range lhScores {
-			if row.MangaName == mangaName {
-				score = row.Score
-				break
-			}
+		lhScore, exists := lhScores[mangaName]
+		if exists {
+			score = lhScore.Score
 		}
 
 		dic[mangaName] = score
@@ -118,7 +116,6 @@ func GetChapterStatus(chapters []string) map[string]bool {
 	db := getDB()
 	defer db.Close()
 
-	lhChapters := []string{}
 	arg := map[string]interface{}{
 		"chapters": chapters,
 	}
@@ -136,24 +133,27 @@ func GetChapterStatus(chapters []string) map[string]bool {
 		panic(err)
 	}
 
-	singleChapter := ""
+	lhChapters := make(map[string]bool)
 	for rows.Next() {
+		singleChapter := ""
 		err = rows.Scan(&singleChapter)
 		if err != nil {
 			panic(err)
 		}
-		lhChapters = append(lhChapters, singleChapter)
+
+		if singleChapter != "" {
+			lhChapters[singleChapter] = true
+		}
 	}
 
-	dic := make(map[string]bool, len(chapters))
+	dic := make(map[string]bool)
 
 	for _, chapter := range chapters {
 		score := false
-		for _, row := range lhChapters {
-			if row == chapter {
-				score = true
-				break
-			}
+
+		_, exists := lhChapters[chapter]
+		if exists {
+			score = true
 		}
 
 		dic[chapter] = score
