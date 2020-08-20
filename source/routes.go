@@ -6,70 +6,28 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type Route struct {
-	Name        string
-	Method      string
-	Pattern     string
-	HandlerFunc http.HandlerFunc
-}
+const GET string = "GET"
+const POST string = "POST"
 
 func NewRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
-	allRoutes := GetRoutes()
-	for _, route := range allRoutes {
-		router.
-			Methods(route.Method).
-			Path(route.Pattern).
-			Name(route.Name).
-			Handler(route.HandlerFunc)
-	}
+
+	route(router, GET, "/", "Index", Index)
+	route(router, GET, "/todos/{todoId}", "TodoShow", TodoShow)
+	route(router, GET, "/list", "RowList", RowList)
+	route(router, GET, "/LhInfo/{mangaName}", "LhInfo", LhInfo)
+
+	route(router, POST, "/LhInfoAddChapter", "LhInfoAddChapter", LhInfoAddChapter)
+	route(router, POST, "/LhInfoSetScore", "LhInfoSetScore", LhInfoSetScore)
+	route(router, POST, "/LhGetScoreBatch", "LhGetScoreBatch", LhGetScoreBatch)
 
 	return router
 }
 
-func GetRoutes() []Route {
-	return []Route{
-		Route{
-			"Index",
-			"GET",
-			"/",
-			Index,
-		},
-		Route{
-			"TodoShow",
-			"GET",
-			"/todos/{todoId}",
-			TodoShow,
-		},
-		Route{
-			"RowList",
-			"GET",
-			"/list",
-			RowList,
-		},
-		Route{
-			"LhInfo",
-			"GET",
-			"/LhInfo/{mangaName}",
-			LhInfo,
-		},
-		Route{
-			"LhInfoAddChapter",
-			"POST",
-			"/LhInfoAddChapter",
-			LhInfoAddChapter,
-		},
-		Route{
-			"LhInfoSetScore",
-			"POST",
-			"/LhInfoSetScore",
-			LhInfoSetScore,
-		},
-		Route{
-			"LhGetScoreBatch",
-			"POST",
-			"/LhGetScoreBatch",
-			LhGetScoreBatch,
-		},
-	}
+func route(router *mux.Router, method, path, name string, handler http.HandlerFunc){
+	router.
+		Methods(method).
+		Path(path).
+		Name(name).
+		Handler(handler)
 }
